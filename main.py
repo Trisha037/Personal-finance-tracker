@@ -4,6 +4,7 @@ import pandas as pd
 import csv
 from datetime import datetime
 from usrdata_entry import get_amount, get_category, get_date, get_description
+import matplotlib.pyplot as plt
 
 class CSV:
     CSV_FILE = "finance_data.csv"
@@ -97,8 +98,57 @@ def add():
     description = get_description()
     CSV.add_entry(date, amount, category, description)
 
-CSV.get_transactions("01-01-2023","01-01-2025")
-add()
+def plot_transactions(df):
+    # takes the data frame as an argument and the data frame has all the transactions that needs to plotted.
+    df.set_index('date', inplace=True)
+    # index is the way to locate and manipulate different columns and sort by date to plot. Find the entires based on the date column.
+    income_df = df[df["category"] == "Income"].resample("D").sum().reindex(df.index, fill_value=0)
+    # [df["category"] == "Income"] --> pick only rows with category Income
+    # resample("D") --> D = daily; have dates of everyday.
+    #sum() --> sum total income on each day.
+    # renindex(df.index, fill_value=0) --> fill missing values with zero
+    # returns the income df with category column set as Income, plot missing dates too within that graph in the frequency of dates.
+    expense_df = df[df["category"] == "Expense"].resample("D").sum().reindex(df.index, fill_value=0)
+
+    plt.figure(figsize=(10,5))
+    # create a plot figure the size of the screen where the plot is and the size is 10 by 5
+    plt.plot(income_df.index,income_df["amount"], label="Income", color='g')
+    # plotting the date index and the amount column label the plot line as income and the plot line will be green.
+    plt.plot(expense_df.index,expense_df["amount"], label="Expense", color='r')
+    # plotting the date index and the amount column label the plot line as expense and the plot line will be red.
+    plt.xlabel("Date")
+    plt.ylabel("Amount")
+    plt.title('Income and Expense Over Time')
+    plt.legend() # see the labels of the different plots
+    plt.grid(True) # see the grid to see the plots
+    plt.show() # will show the graph
+    
+
+def main():
+    #This function is created to make it more interactive instead of calling all the other methods and functions.
+    while True:
+        print("\n1. Add a new transaction.")
+        print("2. View transactions and summary within a given range date.")
+        print("3. Exit")
+        choice = input("Enter your choice (1-3): ")
+
+        if choice == "1":
+            add()
+        elif choice == "2":
+            start_date = get_date("Enter the start date (dd-mm-yyyy): ")
+            end_date = get_date("Enter the end date (dd-mm-yyyy): ")
+            df = CSV.get_transactions(start_date,end_date)
+            if  input("Do you want see the plot? (y/n) ").lower() == "y":
+                plot_transactions(df)
+        elif choice == "3":
+            print("Exiting..")
+            break
+        else:
+            print("Invalid choice. Enter 1,2, or 3")
+
+if __name__ == "__main__":
+    #the main function wil only run if the main file runs itself. if main file initiated by something else it will not run.
+    main()
 
             
 
