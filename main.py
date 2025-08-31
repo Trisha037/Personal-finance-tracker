@@ -71,7 +71,21 @@ class CSV:
         else:
             print(f"Transactions from {start_date.strftime(CSV.FORMAT)} to {end_date.strftime(CSV.FORMAT)}")
             # This is like a heading.
-            print(filtered_df.to_string(index=False))
+            #next will print all the filtered data frames 
+            print(filtered_df.to_string(index=False, formatters={"date": lambda x: x.strftime(CSV.FORMAT)}))
+            #the lambda function will take x as the parameter and applies the format. where x is the date.
+
+
+            total_income = filtered_df[filtered_df["category"] == "Income"]["amount"].sum()
+            total_expense = filtered_df[filtered_df["category"] == "Expense"]["amount"].sum()
+            #using the filteref data frame to filter the categories by Income and Expense and take the amount within them and sum them individually.
+
+            print("\nSummary: ")
+            print(f"Total Income: ${total_income:.2f}")
+            print(f"Total Expense: ${total_expense:.2f}")
+            print(f"Total Expense: ${(total_income-total_expense):.2f}")
+
+        return filtered_df
 
 
 def add():
@@ -83,6 +97,7 @@ def add():
     description = get_description()
     CSV.add_entry(date, amount, category, description)
 
+CSV.get_transactions("01-01-2023","01-01-2025")
 add()
 
             
