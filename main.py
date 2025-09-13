@@ -16,9 +16,9 @@ class CSV:
 
     #initialise the csv file. read it if it already exists or create it if it doesn't exist.
 
-    @classmethod #this is class method decorator for the initialiser.
+    @classmethod #this is a class method decorator for the initialiser.
     # class method will take the entire class 'cls' as the object not 'self'
-    #This is class method will not have access to the object of the class (as it have other extra functions and properties in addition to the class defined). But can have access to the class defined variables and functions.
+    #This class method will not have access to the object of the class (as it have other extra functions and properties in addition to the class defined). But can have access to the class defined variables and functions.
     def initialise_csv(cls):
         # takes parameter cls
         try:
